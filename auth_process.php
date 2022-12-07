@@ -2,11 +2,14 @@
 
 require_once("models/user.php");
 require_once("models/Message.php");
-require_once("models/userDAO.php");
+require_once("dao/userDAO.php");
 require_once("globals.php");
 require_once("db.php");
 
 $message = new Message($BASE_URL);
+
+
+$userDao = new UserDAO($conn, $BASE_URL);
 
 
 // Resgata o tipo do formulário
@@ -28,6 +31,44 @@ if($type === "register") {
     //Verificação de dados minimos
     if($name && $lastname && $email && $password) {
 
+        // verificar se as senhas batem
+
+        if($password === $confirmpassword) {
+
+            // Verificar se o e-mail já está cadastrado no sistema
+            if($userDao->findByEmail($email) == false) {
+
+                $user = new User();
+
+                //Criação de Token e Senha
+
+                $userToken = $user->generateToken();
+                $finalPassword = $user->generateToken($password);
+
+                $user->name = $name;
+                $user->lastname = $lastname;
+                $user->email = $email;
+                $user->password = $finalPassword;
+                $user->token = $usertoken;
+
+                $auth = true;
+
+                $userDAO->create($user, $auth);
+
+            } else {
+                //
+                $message->setMessage("usuario já cadastrado, tente outro e-mail.", "error", "back");
+            }
+
+
+        } else {
+
+            //enviar uma msg de erro . de senhas nao batem
+
+            $message->setMessage("As senhas não são iguais.", "error", "back");
+
+        }
+
 
 
 
@@ -41,3 +82,5 @@ if($type === "register") {
 
 
 }
+
+?>

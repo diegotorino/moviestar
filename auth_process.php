@@ -34,11 +34,8 @@ if($type === "register") {
     } else {
 
         // enviar uma msg de erro dados faltantes
-
-
-
-
-    }
+        $message->setMessage("Por favor, preencha todos os campos.", "error", "back");
+ }
 
 } else if($ype === "login") {
 

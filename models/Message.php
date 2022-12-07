@@ -23,6 +23,14 @@ class Message {
 
     }
     public function getMessage() {
+        if(!empty($_SESSION['msg'])) {
+            return [
+                "msg" => $_SESSION["msg"],
+                "type" => $_SESSION["type"]
+            ];
+        } else {
+            return false;
+        }
         
     }
 
